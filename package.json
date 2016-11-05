@@ -1,7 +1,7 @@
 {
-  "name": "random_person",
+  "name": "random_user",
   "version": "1.0.0",
-  "description": "Get a random person in this channel",
+  "description": "Get you arandom user in this channel",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Stoff81/slack_random_person.git"
+    "url": "git+https://github.com/Stoff81/slack_random_user.git"
   },
   "keywords": [
     "slack",
@@ -18,9 +18,9 @@
   "author": "Tom Stoffer",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Stoff81/slack_random_person.git"
+    "url": "https://github.com/Stoff81/slack_random_user.git"
   },
-  "homepage": "https://github.com/Stoff81/slack_random_person.git#readme",
+  "homepage": "https://github.com/Stoff81/slack_random_user.git#readme",
   "engines": {
     "node": "5.1.1"
   },
