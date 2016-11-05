@@ -96,6 +96,13 @@ controller.on('slash_command', function (slashCommand, message) {
             // but first, let's make sure the token matches!
             if (message.token !== process.env.VERIFICATION_TOKEN) return; //just ignore it.
 
+            if (message.text === "help") {
+              slashCommand.replyPrivate(message,
+                "I can find you a random slack user. " +
+                "Try typing `/random_user` to ask me for a random user in the current channel.");
+                return;
+              }
+
             user_list_url = 'https://slack.com/api/channels.info?' +
                             'token=xoxp-2156145196-4532874081-99178606065-3b0117a5e9f7c42dabfc4e2632cb5ecf' +
                             '&channel=' + message.channel
