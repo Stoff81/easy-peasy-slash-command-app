@@ -89,11 +89,7 @@ controller.setupWebserver(process.env.PORT, function (err, webserver) {
 controller.on('slash_command', function (slashCommand, message) {
 
     switch (message.command) {
-        case "/randomperson": //handle the `/echo` slash command. We might have others assigned to this app too!
-            // The rules are simple: If there is no text following the command, treat it as though they had requested "help"
-            // Otherwise just echo back to them what they sent us.
-
-            // but first, let's make sure the token matches!
+        case "/random_user":
             if (message.token !== process.env.VERIFICATION_TOKEN) return; //just ignore it.
 
             if (message.text === "help") {
@@ -119,11 +115,11 @@ controller.on('slash_command', function (slashCommand, message) {
             };
 
             function step1() {
-              slashCommand.replyPrivateDelayed(message, "Finding dice...")
+              slashCommand.replyPrivateDelayed(message, "Finding the cards...")
             }
 
             function step2() {
-              slashCommand.replyPrivateDelayed(message, "Rolling dice...")
+              slashCommand.replyPrivateDelayed(message, "Shuffling the deck...")
             }
 
             function step3() {
