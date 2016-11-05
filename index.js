@@ -115,32 +115,26 @@ controller.on('slash_command', function (slashCommand, message) {
             };
 
             function step1() {
-              slashCommand.replyPrivateDelayed(message, "Finding the cards...")
+              slashCommand.replyPrivateDelayed(message, "Shuffling the deck...");
             }
 
             function step2() {
-              slashCommand.replyPrivateDelayed(message, "Shuffling the deck...")
-            }
-
-            function step3() {
               var request =  https.get(options, function(response) {
-                // Continuously update stream with data
-                var body = '';
-                response.on('data', function(d) {
-                  var jsonObject = JSON.parse(d);
-                  var channel = jsonObject["channel"]
-                  var members = channel["members"]
-                  var random_user = members[Math.floor(Math.random()*members.length)];
-                  var user = "<@"+random_user+">"
+                  response.on('data', function(d) {
+                    var jsonObject = JSON.parse(d);
+                    var channel = jsonObject["channel"]
+                    var members = channel["members"]
+                    var random_user = members[Math.floor(Math.random()*members.length)];
+                    var user = "<@"+random_user+">"
 
                   slashCommand.replyPrivateDelayed(message, 'Found you a random user:' + user + ' :tada:');
                 })
               })
             }
 
-            step1();
-            setTimeout(step2, 1000);
-            setTimeout(step3, 3000);
+            slashCommand.replyPrivate(message, "Finding the cards...")
+            setTimeout(step1, 1000);
+            setTimeout(step2, 3000);
             return;
         default:
             slashCommand.replyPrivate(message, "I'm afraid I don't know how to " + message.command + " yet.");
