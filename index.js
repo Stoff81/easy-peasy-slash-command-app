@@ -42,6 +42,7 @@
 
 /* Uses the slack button feature to offer a real time bot to multiple teams */
 var Botkit = require('botkit');
+var https = require('https');
 
 if (!process.env.CLIENT_ID || !process.env.CLIENT_SECRET || !process.env.PORT || !process.env.VERIFICATION_TOKEN) {
     console.log('Error: Specify CLIENT_ID, CLIENT_SECRET, VERIFICATION_TOKEN and PORT in environment');
@@ -88,33 +89,44 @@ controller.setupWebserver(process.env.PORT, function (err, webserver) {
 controller.on('slash_command', function (slashCommand, message) {
 
     switch (message.command) {
-        case "/echo": //handle the `/echo` slash command. We might have others assigned to this app too!
+        case "/randomperson": //handle the `/echo` slash command. We might have others assigned to this app too!
             // The rules are simple: If there is no text following the command, treat it as though they had requested "help"
             // Otherwise just echo back to them what they sent us.
 
             // but first, let's make sure the token matches!
             if (message.token !== process.env.VERIFICATION_TOKEN) return; //just ignore it.
 
-            // if no text was supplied, treat it as a help command
-            if (message.text === "" || message.text === "help") {
-                slashCommand.replyPrivate(message,
-                    "I echo back what you tell me. " +
-                    "Try typing `/echo hello` to see.");
-                return;
-            }
+            user_list_url = 'https://slack.com/api/channels.info?' +
+                            'token=xoxp-2156145196-4532874081-99178606065-3b0117a5e9f7c42dabfc4e2632cb5ecf' +
+                            '&channel=' + message.channel
 
-            // If we made it here, just echo what the user typed back at them
-            //TODO You do it!
-            slashCommand.replyPublic(message, "1", function() {
-                slashCommand.replyPublicDelayed(message, "2").then(slashCommand.replyPublicDelayed(message, "3"));
-            });
+            var options = {
+              host: 'slack.com',
+              path: '/api/channels.info?' +
+                    'token=xoxp-2156145196-4532874081-99178606065-3b0117a5e9f7c42dabfc4e2632cb5ecf' +
+                    '&channel=' + message.channel,
+              method: 'GET',
+              headers: {
+                accept: '*/*'
+              }
+            };
 
+            var request =  https.get(options, function(response) {
+              // Continuously update stream with data
+              var body = '';
+              response.on('data', function(d) {
+                var jsonObject = JSON.parse(d);
+                var channel = jsonObject["channel"]
+                var members = channel["members"]
+                var random_user = members[Math.floor(Math.random()*members.length)];
+                var user = "<@"+random_user+">"
+
+                slashCommand.replyPrivate(message, "Hi" + user);
+              });
+            })
             break;
         default:
             slashCommand.replyPublic(message, "I'm afraid I don't know how to " + message.command + " yet.");
 
     }
-
-})
-;
-
+});
