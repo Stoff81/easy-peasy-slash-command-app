@@ -94,50 +94,71 @@ controller.on('slash_command', function (slashCommand, message) {
 
             if (message.text === "help") {
               slashCommand.replyPrivate(message,
-                "I can find you a random slack user. " +
-                "Try typing `/random_user` to ask me for a random user in the current channel.");
+                "I can find you a random slack user in the current channel. " +
+                "\n`/random_user` - Ask me for a random user, its dramatic." +
+                "\n`/random_user work ...(e.g do the dishes)` - I will pick a random person to do the dishes.");
                 return;
               }
 
-            user_list_url = 'https://slack.com/api/channels.info?' +
-                            'token=xoxp-2156145196-4532874081-99178606065-3b0117a5e9f7c42dabfc4e2632cb5ecf' +
-                            '&channel=' + message.channel
+            if (message.text.startsWith("work ")) {
+              var work = message.text.substring(5);
 
-            var options = {
-              host: 'slack.com',
-              path: '/api/channels.info?' +
-                    'token=xoxp-2156145196-4532874081-99178606065-3b0117a5e9f7c42dabfc4e2632cb5ecf' +
-                    '&channel=' + message.channel,
-              method: 'GET',
-              headers: {
-                accept: '*/*'
-              }
-            };
-
-            function step1() {
-              slashCommand.replyPrivateDelayed(message, "Shuffling the deck...");
-            }
-
-            function step2() {
-              var request =  https.get(options, function(response) {
-                  response.on('data', function(d) {
-                    var jsonObject = JSON.parse(d);
-                    var channel = jsonObject["channel"]
-                    var members = channel["members"]
-                    var random_user = members[Math.floor(Math.random()*members.length)];
-                    var user = "<@"+random_user+">"
-
-                  slashCommand.replyPrivateDelayed(message, 'Found you a random user:' + user + ' :tada:');
+              function step1() {
+                var user = getRandomUserForChannel(message.channel, function(user){
+                  slashCommand.replyPublicDelayed(message, "Hey, " + user + " you have been selected to " + work + ". Get to it, or else :gun::sweat_smile:");
                 })
-              })
+              }
+
+              slashCommand.replyPrivate(message, "Finding someone to " + work)
+              setTimeout(step1, 1000);
+              return;
+            } else {
+                doRandomUser(slashCommand, message);
             }
 
-            slashCommand.replyPrivate(message, "Finding the cards...")
-            setTimeout(step1, 1000);
-            setTimeout(step2, 3000);
             return;
         default:
             slashCommand.replyPrivate(message, "I'm afraid I don't know how to " + message.command + " yet.");
 
     }
 });
+
+function doRandomUser(slashCommand, message){
+  function step1() {
+    slashCommand.replyPrivateDelayed(message, "Shuffling the deck...");
+  }
+
+  function step2() {
+    getRandomUserForChannel(message.channel, function(user){
+      slashCommand.replyPrivateDelayed(message, 'Found you a random user:' + user + ' :tada:');
+    })
+  }
+
+  slashCommand.replyPrivate(message, "Finding the cards...")
+  setTimeout(step1, 1000);
+  setTimeout(step2, 3000);
+}
+
+function getRandomUserForChannel(channel, callback){
+  var options = {
+    host: 'slack.com',
+    path: '/api/channels.info?' +
+          'token=xoxp-2156145196-4532874081-99178606065-3b0117a5e9f7c42dabfc4e2632cb5ecf' +
+          '&channel=' + channel,
+    method: 'GET',
+    headers: {
+      accept: '*/*'
+    }
+  };
+  var request =  https.get(options, function(response) {
+      response.on('data', function(d) {
+        var jsonObject = JSON.parse(d);
+        var channel = jsonObject["channel"]
+        var members = channel["members"]
+        var random_user = members[Math.floor(Math.random()*members.length)];
+        var user = "<@"+random_user+">"
+
+        callback(user)
+    })
+  })
+}
