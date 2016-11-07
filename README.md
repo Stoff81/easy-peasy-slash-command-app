@@ -1,4 +1,10 @@
-# easy-peasy-slash-command-app
-A template project to get you started writing Slack slash commands using Botkit
+# slack-random-user
+This is a slack bot which can get you a random_user
+---
+From /random_user help
+---
+I can find you a random slack user in the current channel.
+`/random_user` - Ask me for a random user, its dramatic.
+`/random_user work ...(e.g do the dishes)` - I will pick a random person to do the dishes.
 
-Follow along with [Easy Peasy Slash Commands](https://medium.com/slack-developer-blog/easy-peasy-slash-commands-getting-started-c37ff3f14d3e#.nfr4px2vi)
+Currently hosted on heroku:https://slack-random-user.herokuapp.com/
