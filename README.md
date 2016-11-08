@@ -10,3 +10,8 @@ I can find you a random slack user in the current channel.
 
 ___
 #### Currently hosted on heroku: https://slack-random-user.herokuapp.com/
+
+___
+#### Hosting locally
+`lt --port 8765 --subdomain randomuser`
+`CLIENT_ID=2156145196.100947482423 CLIENT_SECRET=c5f9c011a09bcaee8bcb87331dfa6077 VERIFICATION_TOKEN=BNGqwwFJ5sEFy01e2rPlp1fp PORT=8765 npm start`
